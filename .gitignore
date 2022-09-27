@@ -15,6 +15,7 @@ desktop.ini
 /software/edge/models/seat/*
 !/software/edge/models/seat/bohr_*
 /software/edge/.git/
+/software/edge/.idea/
 
 /software/server/dataset/
 /software/server/models/
