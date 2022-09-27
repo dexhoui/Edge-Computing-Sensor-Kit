@@ -1,0 +1,4 @@
+dataset/data/D0508/running/mic\0\2022-05-08-22-28-43-167432-standby.wav	0
+dataset/data/D0508/running/mic\0\2022-05-08-22-32-30-187944-turning.wav	0
+dataset/data/D0508/running/mic\1\2022-05-08-22-30-16-929516-running - Copy.wav	1
+dataset/data/D0508/running/mic\1\2022-05-08-22-30-16-929516-running.wav	1

@@ -1,0 +1,4 @@
+dataset/data/D0508/running/acc\0\2022-05-08-22-27-53-114616-standby.txt	0
+dataset/data/D0508/running/acc\0\2022-05-08-22-31-40-138659-turning.txt	0
+dataset/data/D0508/running/acc\1\2022-05-08-22-29-27-376309-running - Copy.txt	1
+dataset/data/D0508/running/acc\1\2022-05-08-22-29-27-376309-running.txt	1

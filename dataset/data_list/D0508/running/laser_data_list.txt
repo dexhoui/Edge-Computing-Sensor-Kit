@@ -1,0 +1,4 @@
+dataset/data/D0508/running/laser\0\2022-04-20-22-18-13-833132-spin - Copy.txt	0
+dataset/data/D0508/running/laser\0\2022-04-20-22-18-13-833132-spin.txt	0
+dataset/data/D0508/running/laser\1\2022-04-20-22-18-13-833132-spin - Copy.txt	1
+dataset/data/D0508/running/laser\1\2022-04-20-22-18-13-833132-spin.txt	1
