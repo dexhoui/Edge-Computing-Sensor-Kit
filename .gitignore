@@ -1,5 +1,6 @@
 # configuration
-/.git/
+.git/
+.idea/
 desktop.ini
 
 # assets
@@ -14,7 +15,8 @@ desktop.ini
 /software/edge/dataset/*
 /software/edge/models/seat/*
 !/software/edge/models/seat/bohr_*
-/software/edge/.*
+/software/edge/.git/
+
 
 /software/server/dataset/
 /software/server/models/
