@@ -25,9 +25,9 @@ Install some common software. Some software requires your confirmation, so type 
 
 - `sudo apt install git vim i2c-tools python3-pip portaudio19-dev libsndfile1`
 
-Create some folders in advance.
+Download source code.
 
-- `mkdir tools source models dataset`
+- `git clone --branch edge https://github.com/chubohao/edge-computing-sensor-kit.git ./edge`
 
 Install some python libraries.
 - `sudo pip3 install smbus sparkfun-qwiic serial pyaudio matplotlib librosa tflite-runtime`
@@ -146,14 +146,11 @@ Install some python libraries.
 2. Find `#dtpara=i2s=on` and remove # from it, and save it. [*Before you execute this command, you must know how to use VIM to edit the file.*]
 
 **Second**, install INMP441 Driver, execute the following commands sequentially in Terminal.
-1. `cd ~/tools/ `
-2. `sudo pip3 install --upgrade adafruit-python-shell`
-3. `wget https://github.com/chubohao/edge-computing-sensor-kit/raw/main/software/sensor-edge/tools/i2smic.py`
-4. `sudo python3 i2smic.py`
-5. Please type y when prompt `"Auto load module at boot"?`
-6. Please type y when prompt `"REBOOT NOW? [Y/n]"`
-7. Connect it again via ssh.
-8. `sudo rm i2smic.py and Raspberry-Pi-Installer-Scripts -rf`
+1. `sudo pip3 install --upgrade adafruit-python-shell`
+2. `sudo python3 ~/edge/tools/i2smic.py`
+3. Please type y when prompt `"Auto load module at boot"?`
+4. Please type y when prompt `"REBOOT NOW? [Y/n]"`
+5. Connect it again via ssh.
 
 **Third**, Test the INMP441 Driver.
 1. `arecord -l`
@@ -164,11 +161,7 @@ Install some python libraries.
 
 3. `rm file.wav`
 
-4. `cd ~/source/drivers/`
-
-5. `wget https://github.com/dexhoui/Edge-Computing-Sensor-Kit/raw/main/software/sensor-edge/source/drivers/micDriver.py`
-
-6. `python3 micDriver.py`
+4. `python3 ~/edge/source/drivers/micDriver.py`
 - ![MIC](assets/images/edge/mic.png "MIC")
 
 #### **A2. Motion Processing Unit**
@@ -192,12 +185,9 @@ Install some python libraries.
 
 - ![CM4 IO Board](assets/images/edge/i2c2.png "CM4 IO Board")
 
-**Third**, downlod the driver file of MPU9250.
-1. `cd ~/source/drivers/`
+**Third**, test the driver of MPU9250.
 
-2. `wget https://github.com/chubohao/edge-computing-sensor-kit/raw/main/software/sensor-edge/source/drivers/mpuDriver.py`
-
-3. `python3 mpuDriver.py`
+1. `python3 ~/edge/source/drivers/mpuDriver.py`
 - ![CM4 IO Board](assets/images/edge/mpu9250.png "CM4 IO Board")
 
 [Not work for Magnetometer](https://github.com/kriswiner/MPU9250/issues/123)
@@ -218,12 +208,9 @@ It has been opened in the above, no need to open it again. If there is no i2c-1,
 - ![CM4 IO Board](assets/images/edge/vl53l1x.png "CM4 IO Board")
 
 
-**Third**, downlod the driver file of VL53L1X.
-1. `cd ~/source/drivers/`
+**Third**, test the driver of VL53L1X.
 
-2. `wget https://github.com/chubohao/edge-computing-sensor-kit/raw/main/software/sensor-edge/source/drivers/laserDriver.py`
-
-3. `python3 laserDriver.py`
+1. `python3 ~/edge/source/drivers/laserDriver.py`
 
 - ![CM4 IO Board](assets/images/edge/vl53l1x1.png "CM4 IO Board")
 
@@ -238,13 +225,9 @@ It has been opened in the above, no need to open it again. If there is no i2c-1,
 2. `i2cdetect -y 1` the show all device mount on i2c1 interface, the **0x69** is the address of AMG8833.
 - ![CM4 IO Board](assets/images/edge/eye.png "CM4 IO Board")
 
-**Second**, Check the status of i2c1 and the device which mounted on it.
+**Second**, test the driver of AMG8833.
 
-1. `cd ~/source/drivers/`
-
-1. `wget https://github.com/chubohao/edge-computing-sensor-kit/raw/main/software/sensor-edge/source/drivers/eyeDriver.py`
-
-2. `python3 eyeDriver.py`
+1. `python3 ~/edge/source/drivers/eyeDriver.py`
 - ![CM4 IO Board](assets/images/edge/eye2.png "CM4 IO Board")
 
 #### **A5. BME**
@@ -258,13 +241,9 @@ It has been opened in the above, no need to open it again. If there is no i2c-1,
 2. `i2cdetect -y 1` the show all device mount on i2c1 interface, the **0x77** is the address of BME280.
 - ![CM4 IO Board](assets/images/edge/bme.png "CM4 IO Board")
 
-**Second**, Check the status of i2c1 and the device which mounted on it.
+**Second**, test the driver of BME280.
 
-1. `cd ~/source/drivers/`
-
-1. `wget https://github.com/chubohao/edge-computing-sensor-kit/raw/main/software/sensor-edge/source/drivers/bmeDriver.py`
-
-2. `python3 bmeDriver.py`
+1. `python3 ~/edge/source/drivers/bmeDriver.py`
 - ![BME](assets/images/edge/bme1.png "BME")
 
 #### **A6. Color**
@@ -285,12 +264,9 @@ It has been opened in the above, no need to open it again. If there is no i2c-1,
 
 - ![CM4 IO Board](assets/images/edge/ISL.png "CM4 IO Board")
 
-**Third**, downlod the driver file of ISL29125.
-1. `cd ~/source/drivers/`
+**Third**, test the driver of ISL29125.
 
-2. `wget https://github.com/chubohao/edge-computing-sensor-kit/raw/main/software/sensor-edge/source/drivers/islDriver.py`
-
-3. `python3 islDriver.py`
+1. `python3 ~/edge/source/drivers/islDriver.py`
 - ![CM4 IO Board](assets/images/edge/ISL1.png "CM4 IO Board")
 
 
