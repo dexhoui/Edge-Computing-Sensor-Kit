@@ -1,0 +1,2 @@
+USB供电5V : OK
+CM4供电5V : OK 

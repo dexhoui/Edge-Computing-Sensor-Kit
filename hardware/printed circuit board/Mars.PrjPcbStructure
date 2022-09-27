@@ -1,0 +1,5 @@
+Record=TopLevelDocument|FileName=M1_CM4.SchDoc|SheetNumber=1
+Record=NoMainPathDocument|SourceDocument=M1_CM4.SchDoc|FileName=M2_Power.SchDoc|SheetNumber=2
+Record=NoMainPathDocument|SourceDocument=M1_CM4.SchDoc|FileName=M3_Coral.SchDoc|SheetNumber=3
+Record=NoMainPathDocument|SourceDocument=M1_CM4.SchDoc|FileName=M4_Sensors.SchDoc|SheetNumber=4
+Record=NoMainPathDocument|SourceDocument=M1_CM4.SchDoc|FileName=M5_Camera.SchDoc|SheetNumber=5

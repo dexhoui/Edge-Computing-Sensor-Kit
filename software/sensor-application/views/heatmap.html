@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+    <script src="https://code.highcharts.com/modules/boost-canvas.js"></script>
+    <script src="https://code.highcharts.com/modules/boost.js"></script>
+    <script src="./data.js"></script>
+
+</head>
+
+<body>
+
+    <div id="container" style="height: 440px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>
+    <div id="container2" style="height: 240px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>
+    <br>
+    <button id="button">Generate Random Data</button>
+    <button id="button2">t_removeP</button>
+    <button id="button3">Generate Random Data</button>
+    <button id="button4">Generate Random Data</button>
+    <h1 style="color: #64B587">DATA</h1>
+    {{#each personInfoList}}
+    <h2>昵称:{{this.name}}</h2>
+    <h2>年龄:{{this.age}}</h2>
+    <hr>
+    {{/each}}
+    <div id="p"></div>
+
+    <!-- {{this.DATA}}
+    {{this.Y}}
+    {{this.DATA2}}
+    {{this.Y2}} -->
+
+</body>
+<script src="./index.js"></script>
+
+
+</html>

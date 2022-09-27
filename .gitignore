@@ -1,0 +1,19 @@
+# configuration
+/.git/
+desktop.ini
+
+# assets
+/assets/videos/*
+!/assets/videos/ecsk.mp4
+
+# hardware
+/hardware/documents/*
+!/hardware/documents/cm4io-datasheet.pdf
+
+# software
+/software/edge/dataset/*
+!/software/edge/dataset/data_list/*
+/software/edge/models/
+
+/software/server/dataset/
+/software/server/models/
