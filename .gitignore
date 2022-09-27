@@ -1,0 +1,6 @@
+# configuration
+/.git/
+desktop.ini
+
+./dataset/*
+./models/*
