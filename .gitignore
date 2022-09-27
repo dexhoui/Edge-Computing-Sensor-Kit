@@ -12,10 +12,8 @@ desktop.ini
 
 # software
 /software/edge/dataset/*
-/software/edge/models/*
-!/software/edge/models/seat/bohr_down.tflite
-!/software/edge/models/seat/bohr_up.tflite
-!/software/edge/models/seat/bohr_spin.tflite
+/software/edge/models/seat/*
+!/software/edge/models/seat/bohr_*
 
 /software/server/dataset/
 /software/server/models/
