@@ -14,7 +14,7 @@ desktop.ini
 # software edge
 /software/edge/dataset/*
 /software/edge/models/seat/*
-!/software/edge/models/seat/bohr_*
+# !/software/edge/models/seat/bohr_*
 
 # software server
 /software/server/dataset/
