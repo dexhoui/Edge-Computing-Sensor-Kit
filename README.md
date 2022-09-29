@@ -27,7 +27,7 @@ Install some common software. Some software requires your confirmation, so type 
 
 Download source code.
 
-- `git clone --branch edge https://github.com/chubohao/edge-computing-sensor-kit.git ./edge`
+- `git clone --branch edge https://github.com/chubohao/edge-computing-sensor-kit.git ~/edge`
 
 Install some python libraries.
 - `sudo pip3 install smbus sparkfun-qwiic serial pyaudio matplotlib librosa tflite-runtime`
@@ -309,3 +309,20 @@ It has been opened in the above, no need to open it again. If there is no i2c-3,
 *You can use SFTP software to download the picture from ECCSK, e.g. [FileZilla](https://filezilla-project.org/), the SFTP Port is 22. You can also use other software, e.g. [Pycharm](https://www.jetbrains.com/pycharm/). Here we do not intruduce how to use SFTP, please Google it yourself.*
 
 ## **SAMPLING**
+
+In this section, we introduce how to use **ECSK** to sample the raw data for model training. Please ignore this section If you just want to use the trained model.
+
+Here, we strongly recommend [Pycharm](https://www.jetbrains.com/pycharm/download/#section=windows) to develop edge project, and we do not make too much of the use of Pycharm, please Google it yourself.
+
+### **Download source code to PC**
+1. Create a empty folder named ECSK on PC in your perferred location. enter the floder and open the **Git Bash Here** by right click, *(make sure that you have already installed the **git**)*.
+- ![git](assets/images/edge/git.png)
+
+2. `git clone https://github.com/chubohao/edge-computing-sensor-kit.git ./` please ignore thie step if you have already downloaded it.
+- ![git](assets/images/edge/git1.png)
+
+3. Use pycharm to open its subfolder *"ecsk/software/edge/"*
+- ![pycharm](assets/images/edge/pycharm.png)
+
+4. 
+
