@@ -310,7 +310,7 @@ It has been opened in the above, no need to open it again. If there is no i2c-3,
 
 ## **SAMPLING**
 
-In this section, we introduce how to use **ECSK** to sample the raw data for model training. Please ignore this section If you just want to use the trained model.
+In this section, we introduce how to use **ECSK** to sample the raw data for model training. Please ignore this section If you just want to use the sampled raw data or trained models. Because we have already sampled the raw data and trained some models for some scenes, e.g. CNC machine, Office, BOH machine, Logistics Car, so you can use these raw directly to train you model, and then deploy these model on you ECSK.
 
 Here, we strongly recommend [Pycharm](https://www.jetbrains.com/pycharm/download/#section=windows) to develop edge project, and we do not make too much of the use of Pycharm, please Google it yourself.
 
@@ -345,7 +345,18 @@ Here, we strongly recommend [Pycharm](https://www.jetbrains.com/pycharm/download
 - Then you can use it to control your ECSK instead of PuTTY.
 - ![pycharm](assets/images/edge/pycharm9.png)
 
-5. Execute the sampling program.
 
+5. Config the scene information in the file of **source/arguments.py**, you should change the variable **dataset**, **activity**, and **duration** according your scenes.
+- ![pycharm](assets/images/edge/sampling1.png)
+
+6. Execute the sampling program, please make sure the activity is taking place in your scenario.
 - `python3 ~/edge/source/sampling/sampling.py`
 - ![pycharm](assets/images/edge/pycharm10.png)
+
+7. Download the data from ECSK for the next training.
+- Tools-> Deployment-> Browse Remote Host
+- ![pycharm](assets/images/edge/pycharm11.png)
+- In the ECSK, select the folder dataset, and downlaod form here.
+- ![pycharm](assets/images/edge/pycharm12.png)
+- Then you can find them in you PC.
+- ![pycharm](assets/images/edge/pycharm13.png)
