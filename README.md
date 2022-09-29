@@ -324,5 +324,28 @@ Here, we strongly recommend [Pycharm](https://www.jetbrains.com/pycharm/download
 3. Use pycharm to open its subfolder *"ecsk/software/edge/"*
 - ![pycharm](assets/images/edge/pycharm.png)
 
-4. 
+4. Make the configuration for deployment.
+- Tools-> Deployment-> Configuration
 
+- ![pycharm](assets/images/edge/pycharm1.png)
+- Click "**+**", and select SFTP, and input the alias, here I inputted "**edge**".
+- ![pycharm](assets/images/edge/pycharm2.png)
+- SSH configuration
+- ![pycharm](assets/images/edge/pycharm3.png)
+- Input the *host ip*, *username*, and *password* of ECSK, and test connnection.
+- ![pycharm](assets/images/edge/pycharm4.png)
+- In **Connection** page, click **Autodetect**.
+- ![pycharm](assets/images/edge/pycharm5.png)
+- In **Mappings** page, input */edge* to Deployment path.
+- ![pycharm](assets/images/edge/pycharm6.png)
+- Finally, select **Automatic Upload(Always)**, then your code will automatically upload to ECSK after the code is changed.
+- ![pycharm](assets/images/edge/pycharm7.png)
+- Open SSH tools of Pycharm/.
+- ![pycharm](assets/images/edge/pycharm8.png)
+- Then you can use it to control your ECSK instead of PuTTY.
+- ![pycharm](assets/images/edge/pycharm9.png)
+
+5. Execute the sampling program.
+
+- `python3 ~/edge/source/sampling/sampling.py`
+- ![pycharm](assets/images/edge/pycharm10.png)
