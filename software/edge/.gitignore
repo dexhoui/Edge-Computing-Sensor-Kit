@@ -1,6 +1,6 @@
 .git/
-desktop.ini
 .idea/
+desktop.ini
 
 /dataset/*
 /models/seat/*
