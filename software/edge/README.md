@@ -310,7 +310,7 @@ It has been opened in the above, no need to open it again. If there is no i2c-3,
 
 ## **SAMPLING**
 
-In this section, we introduce how to use **ECSK** to sample the raw data for model training. Please ignore this section If you just want to use the trained model.
+In this section, we introduce how to use **ECSK** to sample the raw data for model training. Please ignore this section If you just want to use the sampled raw data or trained models. Because we have already sampled the raw data and trained some models for some scenes, e.g. CNC machine, Office, BOH machine, Logistics Car, so you can use these raw directly to train you model, and then deploy these model on you ECSK.
 
 Here, we strongly recommend [Pycharm](https://www.jetbrains.com/pycharm/download/#section=windows) to develop edge project, and we do not make too much of the use of Pycharm, please Google it yourself.
 
@@ -324,5 +324,39 @@ Here, we strongly recommend [Pycharm](https://www.jetbrains.com/pycharm/download
 3. Use pycharm to open its subfolder *"ecsk/software/edge/"*
 - ![pycharm](assets/images/edge/pycharm.png)
 
-4. 
+4. Make the configuration for deployment.
+- Tools-> Deployment-> Configuration
 
+- ![pycharm](assets/images/edge/pycharm1.png)
+- Click "**+**", and select SFTP, and input the alias, here I inputted "**edge**".
+- ![pycharm](assets/images/edge/pycharm2.png)
+- SSH configuration
+- ![pycharm](assets/images/edge/pycharm3.png)
+- Input the *host ip*, *username*, and *password* of ECSK, and test connnection.
+- ![pycharm](assets/images/edge/pycharm4.png)
+- In **Connection** page, click **Autodetect**.
+- ![pycharm](assets/images/edge/pycharm5.png)
+- In **Mappings** page, input */edge* to Deployment path.
+- ![pycharm](assets/images/edge/pycharm6.png)
+- Finally, select **Automatic Upload(Always)**, then your code will automatically upload to ECSK after the code is changed.
+- ![pycharm](assets/images/edge/pycharm7.png)
+- Open SSH tools of Pycharm/.
+- ![pycharm](assets/images/edge/pycharm8.png)
+- Then you can use it to control your ECSK instead of PuTTY.
+- ![pycharm](assets/images/edge/pycharm9.png)
+
+
+5. Config the scene information in the file of **source/arguments.py**, you should change the variable **dataset**, **activity**, and **duration** according your scenes.
+- ![pycharm](assets/images/edge/sampling1.png)
+
+6. Execute the sampling program, please make sure the activity is taking place in your scenario.
+- `python3 ~/edge/source/sampling/sampling.py`
+- ![pycharm](assets/images/edge/pycharm10.png)
+
+7. Download the data from ECSK for the next training.
+- Tools-> Deployment-> Browse Remote Host
+- ![pycharm](assets/images/edge/pycharm11.png)
+- In the ECSK, select the folder dataset, and downlaod form here.
+- ![pycharm](assets/images/edge/pycharm12.png)
+- Then you can find them in you PC.
+- ![pycharm](assets/images/edge/pycharm13.png)

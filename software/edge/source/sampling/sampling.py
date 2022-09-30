@@ -4,7 +4,7 @@ print("# current path:", SCRIPT_DIR)
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 ROOT_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 print("# root    path:", ROOT_DIR)
-print("# default duration for sampling is 50s, please modify variable _duration in the file if you want")
+print("# default duration for sampling is 50s, please modify variable duration in the file arguments.py if you want")
 print("# sample program initializing ...")
 time.sleep(3)
 sys.path.append(os.path.dirname(ROOT_DIR))
@@ -27,7 +27,7 @@ import tflite_runtime.interpreter as tflite
 from sklearn import preprocessing
 
 # default duration is 50s.
-_duration = 10
+_duration = arg.duration
 
 # tensorflow default float32, numpy default float64
 '''

@@ -1,10 +1,6 @@
 const express = require('express');
-const expressWs = require('express-ws');
 const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
-const WebSocket = require('ws');
-const http = require('http');
-const path = require('path');
 const app = express();
 const {CONFIGER} = require('./conf')
 const {
@@ -23,19 +19,17 @@ app.engine('html', exphbs({
     defaultLayout: 'layout',
     extname: '.html'
 }));
+
 app.set('view engine', 'html');
 // create application/json parser
 var jsonParser = bodyParser.json()
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({
-    extended: false
-})
-// expressWs(app);
+
 
 const WebSocketServer = require("ws").Server;
 const wss = new WebSocketServer({
     port: 8885
 });
+
 // wsList=[]
 let curWS = null
 wss.on("connection", (ws) => {
@@ -54,7 +48,7 @@ wss.on("connection", (ws) => {
     })
     if (ws.readyState === ws.OPEN) {}
 });
-let currentData = {}
+
 app.get('/heat', function (req, res) {
     res.render('heatmap', {
         layout: false,
@@ -65,21 +59,13 @@ app.get('/heat', function (req, res) {
         Y2
     });
 });
+
 app.get('/', function (req, res) {
     res.render('demo', {
         layout: false,
         title: "测试",
     });
 });
-// app.ws('/ws', function (ws, req) {
-//     ws.send(currentData)
-
-//     ws.on('message', function (msg) {
-//         // 业务代码
-//         ws.send(currentData)
-//         console.log('msg', msg)
-//     })
-// })
 
 app.post('/', jsonParser, (req, res) => {
     // console.log('res', req.body.data)
@@ -141,30 +127,6 @@ app.post('/', jsonParser, (req, res) => {
         console.log('error:', error)
     }
 
-});
-// 匹配/about路由
-app.get('/about', function (req, res) {
-    res.type('text/plain');
-    res.send('访问了about页面');
-});
-
-
-// 定制 404 页面 (返回404状态码)
-app.use(function (req, res) {
-    let currentTime = new Date();
-    res.type('text/plain');
-    res.status(404);
-    res.send('404 - 你访问的页面可能去了火星\n' + currentTime);
-});
-
-
-//定制 500 页面 (返回500状态码)
-app.use(function (err, req, res, next) {
-    let currentTime = new Date();
-    let errInfo = err.stack;
-    res.type('text/plain');
-    res.status(500);
-    res.send('500 - 服务器发生错误\n' + 'errInfo:' + errInfo + '\n' + 'currentTime:' + currentTime);
 });
 
 // Listen to the App Engine-specified port, or 8080 otherwise
