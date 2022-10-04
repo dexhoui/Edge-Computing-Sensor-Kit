@@ -40,7 +40,7 @@ This software is used to install the drivers and boot tool. After a few seconds,
 
 ![CM4 IO Board](/assets/images/hardware/rpiboot.png "CM4 IO Board")
 
-It may need to **wait a while**.
+It may need to **wait a while**. *If you get stuck here, unplug the USB and then plug it into the PC again.*
 
 ![CM4 IO Board](/assets/images/hardware/rpiboots.png "CM4 IO Board")
 

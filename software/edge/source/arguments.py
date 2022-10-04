@@ -4,7 +4,9 @@ dataset = 'CNC'    # scene
 activity = "off"   # activity
 duration = 10      # duration
 
+
+chunk = 7500
 ####  RUNING INFORMATION ####
-# raw data visualization server information
-url = 'http://192.168.0.104:8889/'
+# data visualization server information
+url = 'http://bohao.de/datav/data'
 headers = {'content-type': "application/json"}
