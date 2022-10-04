@@ -4,6 +4,8 @@ import time
 
 def VL53L1():
     tof = qwiic.QwiicVL53L1X()
+    tof.stop_ranging()
+    time.sleep(0.5)
     if not tof.sensor_init():
         print("# laser is initializing")
     else:
@@ -11,11 +13,8 @@ def VL53L1():
 
     tof.set_distance_mode(1)
     tof.set_timing_budget_in_ms(100)
-    tof.stop_ranging()
-    time.sleep(0.5)
     tof.start_ranging()
     time.sleep(0.5)
-
     return tof
 
 class VL53L1X():
@@ -24,7 +23,8 @@ class VL53L1X():
         self.ToF = qwiic.QwiicVL53L1X()
         if (self.ToF.sensor_init() == None):  # Begin returns 0 on a good init
             print("VL53L1X: Laser online!\n")
-        else: print("VL53L1X: Laser offline!\n")
+        else:
+            print("VL53L1X: Laser offline!\n")
         self.ToF.set_distance_mode(1)  # Sets Distance Mode Short (Long- Change value to 2)
 
     def test(self):

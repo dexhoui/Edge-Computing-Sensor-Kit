@@ -5,7 +5,7 @@ print("# current path :", SCRIPT_DIR)
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 ROOT_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 print("# root    path :", ROOT_DIR)
-print("# server ip    : bohao.de/datav/data\n")
+print("# server ip    : bohao.de/ecsk/datav\n")
 time.sleep(5)
 
 sys.path.append(os.path.dirname(ROOT_DIR))

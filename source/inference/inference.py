@@ -137,7 +137,7 @@ class DataProcess(mp.Process):
                             'acc_z': self.acc_z_todo,
                             'laser': self.laser_todo}
                     self.queue_acc.put(data)
-                time.sleep(2)
+                time.sleep(0.5)
         except KeyboardInterrupt:
             print('# DATAP: Is KeyboardInterrupt')
             self.mic.stop_stream()
@@ -217,52 +217,58 @@ class RecoModelProcess(mp.Process):
 
         # 128 * 30 => 64 * 30
         mic_data_tmp = []
+        step = 4
         for i in range(0, 128, 2):
-            mic_data_tmp.append(np.mean(mic_data[i:i+2], 0))
+            if i > 124: step = 2
+            mic_data_tmp.append(np.mean(mic_data[i:i+step], 0))
 
         # 64 * 30 => 6 * 64
         m = []
+        step = 10
         mic_data = np.array(mic_data_tmp)
         for i in range(0, 30, 5):
-            m.append(np.mean(mic_data[:, i:i+10], 1))
-
+            if i >= 20: step = 5
+            m.append(np.mean(mic_data[:, i:i+step], 1))
         # 128 * 6 => 64 * 6
-        x = []
-        y = []
-        z = []
-        for i in range(0, 128, 2):
-            x.append(np.mean(acc_x_data[i:i+2], 0))
-            y.append(np.mean(acc_y_data[i:i+2], 0))
-            z.append(np.mean(acc_z_data[i:i+2], 0))
-
         x_tmp = []
         y_tmp = []
         z_tmp = []
-        acc_x_data = np.transpose(np.array(x))
-        acc_y_data = np.transpose(np.array(y))
-        acc_z_data = np.transpose(np.array(z))
-        for i in range(6):
-            x_tmp.append(np.mean(acc_x_data[0:i+2], 0))
-            y_tmp.append(np.mean(acc_y_data[0:i+2], 0))
-            z_tmp.append(np.mean(acc_z_data[0:i+2], 0))
-        x = x_tmp
-        y = y_tmp
-        z = z_tmp
+        step = 6
+        for i in range(2, 130, 2):
+            j = i
+            if i >= 126:
+                j = 126
+                step = 2
+            x_tmp.append(np.mean(acc_x_data[j:j+step], 0))
+            y_tmp.append(np.mean(acc_y_data[j:j+step], 0))
+            z_tmp.append(np.mean(acc_z_data[j:j+step], 0))
 
-        # 1 * 1 => 6 * 64
-        l = np.array([laser_data for i in range(64 * 6)]).reshape(6, 64)
+        x = []
+        y = []
+        z = []
+        step = 2
+        acc_x_data = np.array(x_tmp)
+        acc_y_data = np.array(y_tmp)
+        acc_z_data = np.array(z_tmp)
+        for i in range(0, 6):
+            if i >= 5: step = 1
+            x.append(np.mean(acc_x_data[:, i:i+step], 1))
+            y.append(np.mean(acc_y_data[:, i:i+step], 1))
+            z.append(np.mean(acc_z_data[:, i:i+step], 1))
 
         # 64 * 6 => 6 * 64
         m = np.array(m) + 1
-        x = np.array(x)
-        y = np.array(y)
-        z = np.array(z)
-
+        x = np.array(x) + 1
+        y = np.array(y) + 1
+        z = np.array(z) + 1
+        # 1 * 1 => 6 * 64
+        l = np.array([laser_data + i * 0.1 for i in range(64 * 6)]).reshape(64, 6)
         m = m.reshape(-1).tolist()
         x = x.reshape(-1).tolist()
         y = y.reshape(-1).tolist()
         z = z.reshape(-1).tolist()
         l = l.reshape(-1).tolist()
+
         data = {'m': m, 'x': x, 'y': y, 'z': z, 'l': l, 'activity': results}
         try:
             feedback = requests.get(arg.url, json=data, timeout=20)

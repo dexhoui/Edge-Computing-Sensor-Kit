@@ -7,7 +7,7 @@ import smbus
 import time
 
 # Get I2C bus
-bus = smbus.SMBus(1)
+bus = smbus.SMBus(3)
 
 # ISL29125 address, 0x44(68)
 # Select configuation-1register, 0x01(01)
