@@ -141,17 +141,14 @@ Install some python libraries.
 </table>
 
 #### **A1. Microphone Driver**
-**First**, open I2S interface of CM4.
-1. `sudo vim /boot/config.txt`
-2. Find `#dtpara=i2s=on` and remove # from it, and save it. [*Before you execute this command, you must know how to use VIM to edit the file.*]
 
-**Second**, install INMP441 Driver, execute the following commands sequentially in Terminal.
+**First**, install INMP441 Driver, execute the following commands sequentially in Terminal.
 1. `sudo python3 ~/edge/tools/i2smic.py`
 2. Please type y when prompt `"Auto load module at boot"?`
 3. Please type y when prompt `"REBOOT NOW? [Y/n]"`
 4. Connect it again via ssh.
 
-**Third**, Test the INMP441 Driver.
+**Second**, Test the INMP441 Driver.
 1. `arecord -l`
 - ![CM4 IO Board](assets/images/edge/arecord.png "CM4 IO Board")
 
