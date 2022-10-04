@@ -8,5 +8,5 @@ duration = 10      # duration
 chunk = 7500
 ####  RUNING INFORMATION ####
 # data visualization server information
-url = 'http://bohao.de/datav/data'
+url = 'https://bohao.de/ecsk/datav'
 headers = {'content-type': "application/json"}

@@ -8,7 +8,7 @@
 #######################################################
 #
 import smbus # i2c bus
-import sys
+import sys, time
 import numpy as np
 #
 #############################
@@ -155,6 +155,7 @@ if __name__=="__main__":
     else:
         print("AMG883: Online")
     status, pixels = amg.read_temp(64)
+    time.sleep(1)
     T_thermistor = amg.read_thermistor() # read thermistor temp
     print("Thermistor Temperature: {0:2.2f}".format(T_thermistor)) # print thermistor temp
     print(np.reshape(pixels, (8, 8)))

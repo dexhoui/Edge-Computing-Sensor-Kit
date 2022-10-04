@@ -143,7 +143,7 @@ Install some python libraries.
 #### **A1. Microphone Driver**
 
 **First**, install INMP441 Driver, execute the following commands sequentially in Terminal.
-1. `sudo python3 ~/edge/tools/i2smic.py`
+1. `cd ~/edge/tools/ && sudo python3 i2smic.py`
 2. Please type y when prompt `"Auto load module at boot"?`
 3. Please type y when prompt `"REBOOT NOW? [Y/n]"`
 4. Connect it again via ssh.
