@@ -6,10 +6,13 @@ Copyright © 2021 DUE TUL
 @ desc  : This modules is used for audio
 @ author: Bohao Chu
 """
+import time, wave, datetime, os, sys
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 import pyaudio
 import numpy as np
-import time, wave, datetime, os
+import arguments as arg
 
 
 
@@ -79,7 +82,7 @@ def data_saver(audio, data_folder, data_frames, start_time, name):
 
 def mic_test():
     audio = pyaudio.PyAudio()
-    chunk = 7500
+    chunk = arg.chunk
     stream = audio.open(format=pyaudio.paInt16, rate=15000, channels=1, input=True, frames_per_buffer=chunk)
     stream.start_stream()
     time.sleep(1)
@@ -87,6 +90,19 @@ def mic_test():
     audio_data = np.frombuffer(stream_data, dtype=np.int16)
     print(audio_data.shape)
     stream.stop_stream()
+
+def INMP441():
+    print("# microphone is initializing")
+    audio = pyaudio.PyAudio()
+    # print(audio.get_default_input_device_info())
+    chunk = arg.chunk
+    time.sleep(0.1)
+    stream = audio.open(format=pyaudio.paInt16, rate=15000, channels=1, input=True, frames_per_buffer=chunk)
+    time.sleep(0.1)
+    stream.stop_stream()
+    time.sleep(0.5)
+    stream.start_stream()
+    return stream, audio
 
 
 if __name__ == "__main__":

@@ -100,9 +100,9 @@ class MPU9250:
         self.configMPU9250(GFS_250, AFS_2G)
         #self.configAK8963(AK8963_MODE_C100HZ, AK8963_BIT_16)
         if (self.searchDevice()):
-            print("MPU9250 : MPU initialization is complete.\n")
+            print("# mpu is initializing")
         else:
-            print("MPU9250 : MPU initialization is complete.\n")
+            print("mpu is in error\n")
 
     '''
     @desc Search Device
@@ -171,7 +171,6 @@ class MPU9250:
         # BYPASS_EN
         bus.write_byte_data(self.address, INT_PIN_CFG, 0x02)
         time.sleep(0.1)
-        print("MPU9250 : Accelerometer and gyroscope configuration complete. ")
 
     '''
     @desc Configure AK8963

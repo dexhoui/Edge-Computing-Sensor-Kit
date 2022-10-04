@@ -1,6 +1,23 @@
 import qwiic
 import time
 
+
+def VL53L1():
+    tof = qwiic.QwiicVL53L1X()
+    if not tof.sensor_init():
+        print("# laser is initializing")
+    else:
+        print("VL53L1X: Laser online!")
+
+    tof.set_distance_mode(1)
+    tof.set_timing_budget_in_ms(100)
+    tof.stop_ranging()
+    time.sleep(0.5)
+    tof.start_ranging()
+    time.sleep(0.5)
+
+    return tof
+
 class VL53L1X():
     def __init__(self):
         # address = 0x29

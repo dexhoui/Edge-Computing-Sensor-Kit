@@ -23,11 +23,11 @@ We recommend that the following two commands before executing any installation t
 
 Install some common software. Some software requires your confirmation, so type Y when prompted.
 
-- `sudo apt install git vim i2c-tools python3-pip portaudio19-dev libsndfile1`
+- `sudo apt install git vim i2c-tools python3-pip portaudio19-dev libsndfile1 adafruit-python-shell`
 
 Download source code.
 
-- `git clone --branch edge https://github.com/chubohao/edge-computing-sensor-kit.git ~/edge`
+- `git clone --branch edge https://github.com/dexhoui/Edge-Computing-Sensor-Kit.git ~/edge`
 
 Install some python libraries.
 - `sudo pip3 install smbus sparkfun-qwiic serial pyaudio matplotlib librosa tflite-runtime`
@@ -146,11 +146,10 @@ Install some python libraries.
 2. Find `#dtpara=i2s=on` and remove # from it, and save it. [*Before you execute this command, you must know how to use VIM to edit the file.*]
 
 **Second**, install INMP441 Driver, execute the following commands sequentially in Terminal.
-1. `sudo pip3 install --upgrade adafruit-python-shell`
-2. `sudo python3 ~/edge/tools/i2smic.py`
-3. Please type y when prompt `"Auto load module at boot"?`
-4. Please type y when prompt `"REBOOT NOW? [Y/n]"`
-5. Connect it again via ssh.
+1. `sudo python3 ~/edge/tools/i2smic.py`
+2. Please type y when prompt `"Auto load module at boot"?`
+3. Please type y when prompt `"REBOOT NOW? [Y/n]"`
+4. Connect it again via ssh.
 
 **Third**, Test the INMP441 Driver.
 1. `arecord -l`
@@ -360,3 +359,34 @@ Here, we strongly recommend [Pycharm](https://www.jetbrains.com/pycharm/download
 - ![pycharm](assets/images/edge/pycharm12.png)
 - Then you can find them in you PC.
 - ![pycharm](assets/images/edge/pycharm13.png)
+
+
+
+## ERROR
+> ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.rear
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.center_lfe
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.side
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.surround21
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.surround21
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.surround40
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.surround41
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.surround50
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.surround51
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.surround71
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.iec958
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.iec958
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.iec958
+ALSA lib confmisc.c:1281:(snd_func_refer) Unable to find definition 'cards.simple-card.pcm.hdmi.0:CARD=0,AES0=4,AES1=130,AES2=0,AES3=2'
+ALSA lib conf.c:4745:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5233:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM hdmi
+ALSA lib confmisc.c:1281:(snd_func_refer) Unable to find definition 'cards.simple-card.pcm.hdmi.0:CARD=0,AES0=4,AES1=130,AES2=0,AES3=2'
+ALSA lib conf.c:4745:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5233:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM hdmi
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.modem
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.modem
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.phoneline
+ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.phoneline
+
+> sudo vim /usr/share/alsa/alsa.conf
