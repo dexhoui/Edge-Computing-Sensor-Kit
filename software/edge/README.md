@@ -23,14 +23,14 @@ We recommend that the following two commands before executing any installation t
 
 Install some common software. Some software requires your confirmation, so type Y when prompted.
 
-- `sudo apt install git vim i2c-tools python3-pip portaudio19-dev libsndfile1 adafruit-python-shell`
+- `sudo apt install git vim i2c-tools python3-pip portaudio19-dev libsndfile1`
 
 Download source code.
 
 - `git clone --branch edge https://github.com/dexhoui/Edge-Computing-Sensor-Kit.git ~/edge`
 
 Install some python libraries.
-- `sudo pip3 install smbus sparkfun-qwiic serial pyaudio matplotlib librosa tflite-runtime`
+- `sudo pip3 install smbus sparkfun-qwiic serial pyaudio matplotlib librosa tflite-runtime adafruit-python-shell`
 
 ### **A. Sensors Driver**
 <table border="1" style="text-align: center;">
