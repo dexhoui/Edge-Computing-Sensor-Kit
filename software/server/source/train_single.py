@@ -14,9 +14,10 @@ import reader
 import tensorflow as tf
 from tensorflow import keras
 
+'''
 physical_devices = tf.config.list_physical_devices("GPU")
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
-
+'''
 
 # cnn model
 class SensorCNN(keras.Model):
@@ -253,8 +254,8 @@ if __name__ == "__main__":
         print(f"laser accuracy: {numpy.sum(laser_accuracy) / len(laser_accuracy)}, "
               f"loss:{numpy.sum(laser_losses) / len(laser_losses)}")
 
-        tf.saved_model.save(mic_model, f"models/tensorflow/{arg.database}/{arg.activity}/mic")
-        tf.saved_model.save(acc_x_model, f"models/tensorflow/{arg.database}/{arg.activity}/acc_x")
-        tf.saved_model.save(acc_y_model, f"models/tensorflow/{arg.database}/{arg.activity}/acc_y")
-        tf.saved_model.save(acc_z_model, f"models/tensorflow/{arg.database}/{arg.activity}/acc_z")
-        tf.saved_model.save(laser_model, f"models/tensorflow/{arg.database}/{arg.activity}/laser")
+        tf.saved_model.save(mic_model, f"models/tensorflow/{arg.scene}/{arg.activity}/mic")
+        tf.saved_model.save(acc_x_model, f"models/tensorflow/{arg.scene}/{arg.activity}/acc_x")
+        tf.saved_model.save(acc_y_model, f"models/tensorflow/{arg.scene}/{arg.activity}/acc_y")
+        tf.saved_model.save(acc_z_model, f"models/tensorflow/{arg.scene}/{arg.activity}/acc_z")
+        tf.saved_model.save(laser_model, f"models/tensorflow/{arg.scene}/{arg.activity}/laser")

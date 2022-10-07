@@ -1,26 +1,36 @@
 import os, sys, time
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SOURCE_DIR = os.path.dirname(SCRIPT_DIR)
+ROOT_DIR = os.path.dirname(SOURCE_DIR)
+sys.path.append(SOURCE_DIR)
+sys.path.append(ROOT_DIR)
 print("# function     : real activity recognition by inference")
 print("# current path :", SCRIPT_DIR)
-sys.path.append(os.path.dirname(SCRIPT_DIR))
-ROOT_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+print("# source  path :", SOURCE_DIR)
 print("# root    path :", ROOT_DIR)
-print("# server ip    : bohao.de/datav/data\n")
+print("# server    ip : https://bohao.de/ecsk/datav\n")
 time.sleep(5)
 
-sys.path.append(os.path.dirname(ROOT_DIR))
 import drivers.mpuDriver as mpuD
 import drivers.micDriver as micD
 import drivers.laserDriver as laserD
+import drivers.eyeDriver as eyeD
+import drivers.bmeDriver as bmeD
 import time, statistics
 import threading
 import numpy as np
 import multiprocessing as mp
-import scipy.signal
-import requests
-import arguments as arg
 import tflite_runtime.interpreter as tflite
-from sklearn import preprocessing
+import datav.datav as dv
+import feature.feature as fea
+import arguments as arg
+import smbus
+
+import busio
+import board
+import adafruit_amg88xx
+i2c = busio.I2C(board.SCL, board.SDA)
 
 
 # tensorflow default float32, numpy default float64
@@ -36,6 +46,8 @@ class DataProcess(mp.Process):
         self.mpu = mpuD.MPU9250()
         self.mic, self.audio = micD.INMP441()
         self.laser = laserD.VL53L1()
+        self.eye = adafruit_amg88xx.AMG88XX(i2c)
+        self.color = smbus.SMBus(3)
         self.queue_mic = queue_mic
         self.queue_acc = queue_acc
 
@@ -44,7 +56,10 @@ class DataProcess(mp.Process):
         self.acc_x_todo = [1 for i in range(500)]
         self.acc_y_todo = [1 for i in range(500)]
         self.acc_z_todo = [1 for i in range(500)]
-        self.laser_todo = 0
+        self.eye_todo = [1 for i in range(64)]
+        self.laser_todo = [1 for i in range(2)]
+        self.color_todo = [1 for i in range(3)]
+        self.bme_todo = [1 for i in range(3)]
 
     '''
         @ name      : mic_raw
@@ -80,19 +95,6 @@ class DataProcess(mp.Process):
 
 
     '''
-        @ name      : mpu_gyr_raw
-        @ desc      : sample from gyr sensor MPU9250 and save raw for training
-        @ parameter : self
-        @ return    : none
-    '''
-    def mpu_gyr_raw(self):
-        time.sleep(2)
-        print(f"# mpu gyr is sampling")
-        while True:
-            gyr = self.mpu.readGyro()
-            time.sleep(0.0006)
-
-    '''
         @ name      : laser
         @ desc      : sample from distance sensor VL53L1X and save raw for training
         @ parameter : self
@@ -107,13 +109,49 @@ class DataProcess(mp.Process):
                 time.sleep(0.04)
             distance = statistics.mean(distance)
             if last_distance - distance > 0.2:
-                self.laser_todo = 0
+                self.laser_todo[0] = 0
             elif last_distance - distance < -0.2:
-                self.laser_todo = 2
+                self.laser_todo[0] = 2
             else:
-                self.laser_todo = 1
+                self.laser_todo[0] = 1
             last_distance = distance
+            self.laser_todo[1] = distance
         self.laser.stop_ranging()
+
+
+    def eye_raw(self):
+        time.sleep(2)
+        print(f"# eye is sampling")
+        while True:
+            eye = []
+            for row in self.eye.pixels:
+                for i in range(8):
+                    eye.append(row[7-i]+20)
+            self.eye_todo = eye
+            time.sleep(0.5)
+
+    def color_raw(self):
+        self.color.write_byte_data(0x44, 0x01, 0x0D)
+        time.sleep(2)
+        print(f"# color is sampling")
+        while True:
+            data = self.color.read_i2c_block_data(0x44, 0x09, 6)
+            time.sleep(0.5)
+            # Convert the data
+            self.color_todo[0] = data[3] * 256 + data[2]
+            self.color_todo[1] = data[1] * 256 + data[0]
+            self.color_todo[2] = data[5] * 256 + data[4]
+
+    def bme_raw(self):
+        time.sleep(2)
+        print(f"# color is sampling")
+        while True:
+            temperature, pressure, humidity = bmeD.readBME280All()
+            time.sleep(0.5)
+            self.bme_todo[0] = temperature
+            self.bme_todo[1] = humidity
+            self.bme_todo[2] = pressure/100
+
 
     def run(self):
         try:
@@ -123,8 +161,14 @@ class DataProcess(mp.Process):
             threads.append(t1)
             t2 = threading.Thread(target=self.mpu_acc_raw)
             threads.append(t2)
+            t3 = threading.Thread(target=self.eye_raw)
+            threads.append(t3)
             t4 = threading.Thread(target=self.laser_raw)
             threads.append(t4)
+            t5 = threading.Thread(target=self.color_raw)
+            threads.append(t5)
+            t6 = threading.Thread(target=self.bme_raw)
+            threads.append(t6)
             for t in threads:
                 t.start()
             while True:
@@ -135,7 +179,11 @@ class DataProcess(mp.Process):
                     data = {'acc_x': self.acc_x_todo,
                             'acc_y': self.acc_y_todo,
                             'acc_z': self.acc_z_todo,
-                            'laser': self.laser_todo}
+                            'laser': self.laser_todo,
+                            'eye'  : self.eye_todo,
+                            'color': self.color_todo,
+                            'bme': self.bme_todo
+                            }
                     self.queue_acc.put(data)
                 time.sleep(0.5)
         except KeyboardInterrupt:
@@ -155,13 +203,27 @@ class MicFeatureProcess(mp.Process):
 
     def run(self):
         print("# mic feature process id : ", os.getpid())
-        scaler = preprocessing.StandardScaler()
+        i = 0
+        tmp = []
+        tmp_feature = np.random.random((60, 1))
         while True:
             if not self.queue_in.empty():
                 result = self.queue_in.get()
-                _, _, ps = scipy.signal.stft(result['mic'], fs=15000, nperseg=256, noverlap=32)
-                mic_feature = scaler.fit_transform(abs(ps[1:]))
+                mic_feature = fea.micfeature(result['mic'])
+                if i < 100:
+                    i = i + 1
+                    tmp.extend(result['mic'])
+                    tmp_feature = np.concatenate((tmp_feature, mic_feature), axis=1)
+                else:
+                    i = 0
+                    dv.datasave('mic', tmp)
+                    fea.featuresave('mic', np.array(tmp_feature))
+                    tmp = []
+                    tmp_feature = mic_feature
+
                 self.queue_out.put(mic_feature)
+
+
 
 
 class AccFeatureProcess(mp.Process):
@@ -172,24 +234,33 @@ class AccFeatureProcess(mp.Process):
 
     def run(self):
         print("# acc feature process id : ", os.getpid())
-        scaler = preprocessing.StandardScaler()
+        i = 0
+        tmp = []
+        tmp_feature = np.random.random((60, 1))
         while True:
             if not self.queue_in.empty():
                 result = self.queue_in.get()
-
-                _, _, ps = scipy.signal.stft(result['acc_x'], fs=1000, nperseg=256, noverlap=160)
-                acc_x_feature = abs(ps[1:])
-                _, _, ps = scipy.signal.stft(result['acc_y'], fs=1000, nperseg=256, noverlap=160)
-                acc_y_feature = abs(ps[1:])
-                _, _, ps = scipy.signal.stft(result['acc_z'], fs=1000, nperseg=256, noverlap=160)
-                acc_z_feature = abs(ps[1:])
-                laser_feature = [result['laser'] for i in range(128)]
+                acc_x_feature, acc_y_feature, acc_z_feature = fea.accfreature(result['acc_x'], result['acc_y'], result['acc_z'])
+                if i < 100:
+                    i = i + 1
+                    tmp.extend(result['acc_x'])
+                    tmp_feature = np.concatenate((tmp_feature, acc_x_feature), axis=1)
+                else:
+                    i = 0
+                    dv.datasave('acc_x', tmp)
+                    fea.featuresave('acc_x', tmp_feature)
+                    tmp_feature = acc_x_feature
+                    tmp = []
+                laser_feature = result['laser']
                 data = {'acc_x': acc_x_feature,
                         'acc_y': acc_y_feature,
                         'acc_z': acc_z_feature,
-                        'laser': laser_feature}
+                        'laser': laser_feature,
+                        'eye'  : result['eye'],
+                        'color': result['color'],
+                        'bme': result['bme'],
+                        }
                 self.queue_out.put(data)
-                # print("acc_stft:", result['acc_x'][:10], time.time() - start)
 
 
 class RecoModelProcess(mp.Process):
@@ -198,104 +269,36 @@ class RecoModelProcess(mp.Process):
         self.queue_mic_fea = queue_mic_fea
         self.queue_acc_fea = queue_acc_fea
 
+
         # feature placeholder
-        self.mic_feature = np.random.random((128, 35))
-        self.acc_x_feature = np.random.random((128, 7))
-        self.acc_y_feature = np.random.random((128, 7))
-        self.acc_z_feature = np.random.random((128, 7))
-        self.laser_feature = np.random.random((128, 1))
+        self.mic_feature = np.random.random((60, 66))
+        self.acc_x_feature = np.random.random((60, 8))
+        self.acc_y_feature = np.random.random((60, 8))
+        self.acc_z_feature = np.random.random((60, 8))
+        self.laser_feature = np.random.random((60, 1))
 
-    def visulation(self, results):
-        # 128 * 35 => 128 * 30
-        mic_data = self.mic_feature[:, 5:]
+    '''
+         @ name      : mpu_gyr_raw
+         @ desc      : sample from gyr sensor MPU9250 and save raw for training
+         @ parameter : self
+         @ return    : none
+     '''
 
-        # 128 * 7  => 128 * 6
-        acc_x_data = self.acc_x_feature[:, 1:]
-        acc_y_data = self.acc_y_feature[:, 1:]
-        acc_z_data = self.acc_z_feature[:, 1:]
-        laser_data = self.laser_feature[0]
-
-        # 128 * 30 => 64 * 30
-        mic_data_tmp = []
-        step = 4
-        for i in range(0, 128, 2):
-            if i > 124: step = 2
-            mic_data_tmp.append(np.mean(mic_data[i:i+step], 0))
-
-        # 64 * 30 => 6 * 64
-        m = []
-        step = 10
-        mic_data = np.array(mic_data_tmp)
-        for i in range(0, 30, 5):
-            if i >= 20: step = 5
-            m.append(np.mean(mic_data[:, i:i+step], 1))
-        # 128 * 6 => 64 * 6
-        x_tmp = []
-        y_tmp = []
-        z_tmp = []
-        step = 6
-        for i in range(2, 130, 2):
-            j = i
-            if i >= 126:
-                j = 126
-                step = 2
-            x_tmp.append(np.mean(acc_x_data[j:j+step], 0))
-            y_tmp.append(np.mean(acc_y_data[j:j+step], 0))
-            z_tmp.append(np.mean(acc_z_data[j:j+step], 0))
-
-        x = []
-        y = []
-        z = []
-        step = 2
-        acc_x_data = np.array(x_tmp)
-        acc_y_data = np.array(y_tmp)
-        acc_z_data = np.array(z_tmp)
-        for i in range(0, 6):
-            if i >= 5: step = 1
-            x.append(np.mean(acc_x_data[:, i:i+step], 1))
-            y.append(np.mean(acc_y_data[:, i:i+step], 1))
-            z.append(np.mean(acc_z_data[:, i:i+step], 1))
-
-        # 64 * 6 => 6 * 64
-        m = np.array(m) + 1
-        x = np.array(x) + 1
-        y = np.array(y) + 1
-        z = np.array(z) + 1
-        # 1 * 1 => 6 * 64
-        l = np.array([laser_data + i * 0.1 for i in range(64 * 6)]).reshape(64, 6)
-        m = m.reshape(-1).tolist()
-        x = x.reshape(-1).tolist()
-        y = y.reshape(-1).tolist()
-        z = z.reshape(-1).tolist()
-        l = l.reshape(-1).tolist()
-
-        data = {'m': m, 'x': x, 'y': y, 'z': z, 'l': l, 'activity': results}
-        try:
-            feedback = requests.get(arg.url, json=data, timeout=20)
-            print(feedback.text, results)
-        except requests.exceptions.ConnectionError:
-            print('ConnectionError')
-            time.sleep(3)
-        except requests.exceptions.ChunkedEncodingError:
-            print('ChunkedEncodingError')
 
     def run(self):
         print("# model process id : ", os.getpid())
-        spin_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/bohr_spin.tflite")
+        spin_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/on.tflite")
         spin_interpreter.allocate_tensors()
-        up_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/bohr_up.tflite")
+        up_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/on.tflite")
         up_interpreter.allocate_tensors()
-        down_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/bohr_down.tflite")
+        down_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/on.tflite")
         down_interpreter.allocate_tensors()
-        '''
-        print(spin_interpreter.get_output_details())
-        print(up_interpreter.get_output_details())
-        print(down_interpreter.get_output_details())
-        '''
+        #print(spin_interpreter.get_output_details())
 
         input_details = spin_interpreter.get_input_details()
+        #print(spin_interpreter.get_input_details())
         input_index = input_details[0]['index']
-        # 0: 96, 1: 58, 2:68, 3:78, 4:88, 5:93
+        # 0-fin: 96, 1-mic: 58, 2-x:68, 3-y:78, 4-z:88, 5-laser:93
 
         while True:
             pred_resutl = []
@@ -307,53 +310,49 @@ class RecoModelProcess(mp.Process):
                 self.acc_x_feature = result['acc_x']
                 self.acc_y_feature = result['acc_y']
                 self.acc_z_feature = result['acc_z']
-                self.laser_feature = result['laser']
-
+                self.laser_feature = [result['laser'][0] for i in range(60)]
+                laser_data = result['laser'][1]
+                eye_data = result['eye']
+                color_data = result['color']
+                bme_data = result['bme']
                 merge_feature = np.column_stack((self.mic_feature,
                                                  self.acc_x_feature,
                                                  self.acc_y_feature,
                                                  self.acc_z_feature,
-                                                 self.laser_feature)).astype(dtype=np.float32).reshape(1, 128, 57, 1)
+                                                 self.laser_feature)).astype(dtype=np.float32).reshape(1, 60, 91, 1)
 
                 spin_interpreter.set_tensor(input_index, merge_feature)
                 spin_interpreter.invoke()
-                spin_output = spin_interpreter.get_tensor(96)
+                spin_output = spin_interpreter.get_tensor(58)
+
                 up_interpreter.set_tensor(input_index, merge_feature)
                 up_interpreter.invoke()
-                up_output = up_interpreter.get_tensor(93)
+                up_output = up_interpreter.get_tensor(68)
 
                 down_interpreter.set_tensor(input_index, merge_feature)
                 down_interpreter.invoke()
                 down_output = down_interpreter.get_tensor(93)
-                if spin_output > 0.5 or up_output > 0.5 or down_output > 0.5:
-                    pred_resutl.append('on')
-                    print(f"on     : Y")
-                    print(f"off    : N")
-                else:
-                    pred_resutl.append('off')
-                    print(f"on     : N")
-                    print(f"off    : Y")
-
-                if spin_output > 0.5:
+                downa_output = down_interpreter.get_tensor(96)
+                print(downa_output, spin_output, up_output, down_output)
+                if spin_output > 0.2:
                     pred_resutl.append('spin')
-                    print(f"spin   : Y")
+                    print(f"spin       : Y")
                 else:
-                    print(f"spin   : N")
-
-
-                if up_output > 0.5:
-                    pred_resutl.append('up')
-                    print(f"up     : Y")
+                    print(f"spin       : N")
+                if result['laser'][0] == 2:
+                    pred_resutl.append('upward')
+                    print(f"upward     : Y")
                 else:
-                    print(f"up     : N")
+                    print(f"upward     : N")
 
-                if down_output > 0.5:
-                    pred_resutl.append('down')
-                    print(f"down   : Y")
+                if result['laser'][0] == 0:
+                    pred_resutl.append('downward')
+                    print(f"downward   : Y")
                 else:
-                    print(f"down   : N")
-                self.visulation(pred_resutl)
+                    print(f"downward   : N")
 
+                # 0.18s
+                dv.featurev(self.mic_feature, self.acc_x_feature, self.acc_y_feature, self.acc_z_feature,self.laser_feature[0], pred_resutl, laser_data, eye_data, color_data, bme_data)
 
 if __name__ == "__main__":
     try:
@@ -373,3 +372,6 @@ if __name__ == "__main__":
     finally:
         time.sleep(3)
         print("\n# please type ctrl+c to stop program")
+
+
+

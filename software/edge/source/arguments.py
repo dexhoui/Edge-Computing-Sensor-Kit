@@ -1,8 +1,8 @@
 ####  SAMPLING INFORMATION ####
 # scene information
-dataset = 'CNC'    # scene
-activity = "off"   # activity
-duration = 10      # duration
+dataset = '350'    # scene
+activity = "on"   # activity
+duration = 50      # duration
 
 
 chunk = 7500

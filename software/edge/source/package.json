@@ -1,105 +1,94 @@
-[
-  {
-    'name': 'StatefulPartitionedCall:3',
-    'index': 77,
-    'shape': array([1, 1], dtype=int32),
-    'shape_signature': array([-1,  1], dtype=int32),
-    'dtype': <class 'numpy.float32'>,
-    'quantization': (0.0, 0),
-    'quantization_parameters': {
-      'scales': array([], dtype=float32),
-    'zero_points': array([], dtype=int32),
-    'quantized_dimension': 0
-    },
-    'sparsity_parameters': {}
-    },
+[{
+	'name': 'StatefulPartitionedCall:3',
+	'index': 78,
+	'shape': array([1, 1], dtype = int32),
+	'shape_signature': array([-1, 1], dtype = int32),
+	'dtype': < class 'numpy.float32' > ,
+	'quantization': (0.0, 0),
+	'quantization_parameters': {
+		'scales': array([], dtype = float32),
+		'zero_points': array([], dtype = int32),
+		'quantized_dimension': 0
+	},
+	'sparsity_parameters': {}
+}, {
+	'name': 'StatefulPartitionedCall:0',
+	'index': 96,
+	'shape': array([1, 1], dtype = int32),
+	'shape_signature': array([-1, 1], dtype = int32),
+	'dtype': < class 'numpy.float32' > ,
+	'quantization': (0.0, 0),
+	'quantization_parameters': {
+		'scales': array([], dtype = float32),
+		'zero_points': array([], dtype = int32),
+		'quantized_dimension': 0
+	},
+	'sparsity_parameters': {}
+}, {
+	'name': 'StatefulPartitionedCall:4',
+	'index': 88,
+	'shape': array([1, 1], dtype = int32),
+	'shape_signature': array([-1, 1], dtype = int32),
+	'dtype': < class 'numpy.float32' > ,
+	'quantization': (0.0, 0),
+	'quantization_parameters': {
+		'scales': array([], dtype = float32),
+		'zero_points': array([], dtype = int32),
+		'quantized_dimension': 0
+	},
+	'sparsity_parameters': {}
+}, {
+	'name': 'StatefulPartitionedCall:2',
+	'index': 68,
+	'shape': array([1, 1], dtype = int32),
+	'shape_signature': array([-1, 1], dtype = int32),
+	'dtype': < class 'numpy.float32' > ,
+	'quantization': (0.0, 0),
+	'quantization_parameters': {
+		'scales': array([], dtype = float32),
+		'zero_points': array([], dtype = int32),
+		'quantized_dimension': 0
+	},
+	'sparsity_parameters': {}
+}, {
+	'name': 'StatefulPartitionedCall:1',
+	'index': 58,
+	'shape': array([1, 1], dtype = int32),
+	'shape_signature': array([-1, 1], dtype = int32),
+	'dtype': < class 'numpy.float32' > ,
+	'quantization': (0.0, 0),
+	'quantization_parameters': {
+		'scales': array([], dtype = float32),
+		'zero_points': array([], dtype = int32),
+		'quantized_dimension': 0
+	},
+	'sparsity_parameters': {}
+}, {
+	'name': 'StatefulPartitionedCall:5',
+	'index': 93,
+	'shape': array([1, 1], dtype = int32),
+	'shape_signature': array([-1, 1], dtype = int32),
+	'dtype': < class 'numpy.float32' > ,
+	'quantization': (0.0, 0),
+	'quantization_parameters': {
+		'scales': array([], dtype = float32),
+		'zero_points': array([], dtype = int32),
+		'quantized_dimension': 0
+	},
+	'sparsity_parameters': {}
+}]
 
-  {
-    'name': 'StatefulPartitionedCall:0',
-    'index': 98, 'shape': array([1, 1], dtype=int32),
-    'shape_signature': array([-1,  1], dtype=int32),
-    'dtype': <class 'numpy.float32'>, 'quantization': (0.0, 0),
-    'quantization_parameters': {
-      'scales': array([], dtype=float32),
-      'zero_points': array([], dtype=int32), 'quantized_dimension': 0
-    },
-    'sparsity_parameters': {}
-  },
-
-  {
-    'name': 'StatefulPartitionedCall:4',
-    'index': 86,
-    'shape': array([1, 1], dtype=int32),
-    'shape_signature': array([-1,  1], dtype=int32),
-    'dtype': <class 'numpy.float32'>,
-    'quantization': (0.0, 0),
-    'quantization_parameters': {
-      'scales': array([], dtype=float32),
-      'zero_points': array([], dtype=int32),
-      'quantized_dimension': 0
-  },
-    'sparsity_parameters': {}
-  },
-
-  {
-    'name': 'StatefulPartitionedCall:2',
-    'index': 68,
-    'shape': array([1, 1], dtype=int32),
-    'shape_signature': array([-1,  1], dtype=int32),
-    'dtype': <class 'numpy.float32'>,
-    'quantization': (0.0, 0),
-    'quantization_parameters': {
-      'scales': array([], dtype=float32),
-      'zero_points': array([], dtype=int32),
-      'quantized_dimension': 0
-    },
-    'sparsity_parameters': {}
-  },
-
-  {
-    'name': 'StatefulPartitionedCall:1',
-    'index': 95,
-    'shape': array([1, 1], dtype=int32),
-    'shape_signature': array([-1,  1], dtype=int32),
-    'dtype': <class 'numpy.float32'>,
-    'quantization': (0.0, 0),
-    'quantization_parameters': {
-      'scales': array([], dtype=float32),
-      'zero_points': array([], dtype=int32),
-      'quantized_dimension': 0
-    },
-    'sparsity_parameters': {}
-  },
-
-  {
-    'name': 'StatefulPartitionedCall:5',
-    'index': 59,
-    'shape': array([1, 1], dtype=int32),
-    'shape_signature': array([-1,  1], dtype=int32),
-    'dtype': <class 'numpy.float32'>, 'quantization': (0.0, 0),
-    'quantization_parameters': {
-      'scales': array([], dtype=float32),
-      'zero_points': array([], dtype=int32),
-      'quantized_dimension': 0
-    },
-    'sparsity_parameters': {}
-  }
-
-]
-
-[
-  {
-    'name': 'serving_default_input_1:0',
-    'index': 0,
-    'shape': array([  1, 128, 201,   1], dtype=int32),
-    'shape_signature': array([ -1, 128, 201,   1], dtype=int32),
-    'dtype': <class 'numpy.float32'>,
-    'quantization': (0.0, 0),
-    'quantization_parameters': {
-      'scales': array([], dtype=float32),
-      'zero_points': array([], dtype=int32),
-      'quantized_dimension': 0
-    },
-    'sparsity_parameters': {}
-  }
-]
+[{
+	'name': 'serving_default_input_1:0',
+	'index': 0,
+	'shape': array([1, 60, 91, 1], dtype = int32),
+	'shape_signature': array([-1, 60, 91, 1], dtype = int32),
+	'dtype': < class 'numpy.float32' > ,
+	'quantization': (0.0, 0),
+	'quantization_parameters': {
+		'scales': array([], dtype = float32),
+		'zero_points': array([], dtype = int32),
+		'quantized_dimension': 0
+	},
+	'sparsity_parameters': {}
+}]

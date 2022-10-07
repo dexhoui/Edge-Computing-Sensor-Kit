@@ -162,7 +162,7 @@ def main():
   print("Chip ID     :", chip_id)
   print("Version     :", chip_version)
 
-  temperature,pressure,humidity = readBME280All()
+  temperature, pressure,humidity = readBME280All()
 
   print("Temperature : ", temperature, "C")
   print("Pressure : ", pressure, "hPa")
