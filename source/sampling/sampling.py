@@ -68,7 +68,7 @@ class DataProcess(Process):
         time.sleep(1)
 
         # microphone start
-        print(f"microphone is sampling for {arg.activity}")
+        print(f"microphone is sampling for {arg.activity}",  time.time())
         index = burning_time = 0
         audio_frames = []
         while stream.is_active():
@@ -100,7 +100,6 @@ class DataProcess(Process):
     '''
     def mpu_acc_raw(self):
         time.sleep(2)
-        print(f"mpu acc is sampling for {arg.activity}")
         index = burning_time = 0
         # check if the direction exists, and create this direction if it does not.
         file_dir = f'{ROOT_DIR}/dataset/{arg.dataset}/acc/{arg.activity}/'
@@ -108,12 +107,12 @@ class DataProcess(Process):
             os.makedirs(file_dir)
         # create the filename using current date and time.
         filename = f'{datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")}-{arg.activity}.txt'
+        print(f"mpu acc is sampling for {arg.activity}", time.time())
         with open(file_dir + filename, 'a') as f_acc:
             while True:
                 start = time.time()
                 accel = self.mpu.readAccel()
                 f_acc.write("{}, {}, {}, {}\r\n".format(index, accel['x'], accel['y'], accel['z']))
-                time.sleep(0.0006)
                 burning_time = burning_time + time.time() - start
                 index = index + 1
                 if index % (1000*_duration) == 0:
@@ -125,10 +124,9 @@ class DataProcess(Process):
         @ desc      : sample from gyr sensor MPU9250 and save raw for training
         @ parameter : self
         @ return    : none
-    '''
+    
     def mpu_gyr_raw(self):
         time.sleep(2)
-        print(f"mpu gyr is sampling for {arg.activity}")
         index = burning_time = 0
         # check if the direction exists, and create this direction if it does not.
         file_dir = f'{ROOT_DIR}/dataset/{arg.dataset}/gyr/{arg.activity}/'
@@ -136,6 +134,7 @@ class DataProcess(Process):
             os.makedirs(file_dir)
         # create the filename using current date and time.
         filename = f'{datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")}-{arg.activity}.txt'
+        print(f"mpu gyr is sampling for {arg.activity}", time.time())
         with open(file_dir + filename, 'a') as f_acc:
             while True:
                 start = time.time()
@@ -147,7 +146,7 @@ class DataProcess(Process):
                 if index % (1000*_duration) == 0:
                     print('mpu gyr stop sampling and the real sample rate is ', 1/(burning_time/(1000*_duration)))
                     return
-
+    '''
     '''
         @ name      : laser
         @ desc      : sample from distance sensor VL53L1X and save raw for training
@@ -192,8 +191,6 @@ class DataProcess(Process):
         threads.append(t1)
         t2 = threading.Thread(target=self.mpu_acc_raw)
         threads.append(t2)
-        t3 = threading.Thread(target=self.mpu_gyr_raw)
-        threads.append(t3)
         t4 = threading.Thread(target=self.laser)
         threads.append(t4)
         for t in threads:
