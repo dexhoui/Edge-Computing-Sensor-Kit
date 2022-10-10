@@ -1,5 +1,4 @@
 import os, sys, time
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_DIR = os.path.dirname(SCRIPT_DIR)
 ROOT_DIR = os.path.dirname(SOURCE_DIR)
@@ -15,7 +14,6 @@ time.sleep(5)
 import drivers.mpuDriver as mpuD
 import drivers.micDriver as micD
 import drivers.laserDriver as laserD
-import drivers.eyeDriver as eyeD
 import drivers.bmeDriver as bmeD
 import time, statistics
 import threading
@@ -30,7 +28,6 @@ import smbus
 import busio
 import board
 import adafruit_amg88xx
-i2c = busio.I2C(board.SCL, board.SDA)
 
 
 # tensorflow default float32, numpy default float64
@@ -46,7 +43,7 @@ class DataProcess(mp.Process):
         self.mpu = mpuD.MPU9250()
         self.mic, self.audio = micD.INMP441()
         self.laser = laserD.VL53L1()
-        self.eye = adafruit_amg88xx.AMG88XX(i2c)
+        self.eye = adafruit_amg88xx.AMG88XX(busio.I2C(board.SCL, board.SDA))
         self.color = smbus.SMBus(3)
         self.queue_mic = queue_mic
         self.queue_acc = queue_acc
@@ -60,6 +57,7 @@ class DataProcess(mp.Process):
         self.laser_todo = [1 for i in range(2)]
         self.color_todo = [1 for i in range(3)]
         self.bme_todo = [1 for i in range(3)]
+        self.mag_todo = [1 for i in range(4)]
 
     '''
         @ name      : mic_raw
@@ -93,6 +91,30 @@ class DataProcess(mp.Process):
             self.acc_z_todo.append(acc['z'])
             time.sleep(0.0006)
 
+    def mpu_mag_raw(self):
+        time.sleep(2)
+        print(f"# mpu mag is sampling")
+        last_mag = 0
+        while True:
+            mag = []
+            for i in range(10):
+                magv = self.mpu.readMagnet()
+                mag.append(magv['x'])
+                time.sleep(0.04)
+            mag = statistics.mean(mag)
+            if mag - last_mag > 2:
+                #print('up', mag-last_mag)
+                self.mag_todo[0] = 2
+            elif mag - last_mag < -2:
+                self.mag_todo[0] = 1
+                #print('down', mag-last_mag)
+            else:
+                self.mag_todo[0] = 0
+                #print('noupnodown', mag-last_mag)
+            last_mag = mag
+            self.mag_todo[1] = magv['x']
+            self.mag_todo[2] = magv['y']
+            self.mag_todo[3] = magv['z']
 
     '''
         @ name      : laser
@@ -169,6 +191,8 @@ class DataProcess(mp.Process):
             threads.append(t5)
             t6 = threading.Thread(target=self.bme_raw)
             threads.append(t6)
+            t7 = threading.Thread(target=self.mpu_mag_raw)
+            threads.append(t7)
             for t in threads:
                 t.start()
             while True:
@@ -182,7 +206,8 @@ class DataProcess(mp.Process):
                             'laser': self.laser_todo,
                             'eye'  : self.eye_todo,
                             'color': self.color_todo,
-                            'bme': self.bme_todo
+                            'bme': self.bme_todo,
+                            'mag': self.mag_todo
                             }
                     self.queue_acc.put(data)
                 time.sleep(0.5)
@@ -203,27 +228,11 @@ class MicFeatureProcess(mp.Process):
 
     def run(self):
         print("# mic feature process id : ", os.getpid())
-        i = 0
-        tmp = []
-        tmp_feature = np.random.random((60, 1))
         while True:
             if not self.queue_in.empty():
                 result = self.queue_in.get()
                 mic_feature = fea.micfeature(result['mic'])
-                if i < 100:
-                    i = i + 1
-                    tmp.extend(result['mic'])
-                    tmp_feature = np.concatenate((tmp_feature, mic_feature), axis=1)
-                else:
-                    i = 0
-                    dv.datasave('mic', tmp)
-                    fea.featuresave('mic', np.array(tmp_feature))
-                    tmp = []
-                    tmp_feature = mic_feature
-
                 self.queue_out.put(mic_feature)
-
-
 
 
 class AccFeatureProcess(mp.Process):
@@ -234,23 +243,10 @@ class AccFeatureProcess(mp.Process):
 
     def run(self):
         print("# acc feature process id : ", os.getpid())
-        i = 0
-        tmp = []
-        tmp_feature = np.random.random((60, 1))
         while True:
             if not self.queue_in.empty():
                 result = self.queue_in.get()
                 acc_x_feature, acc_y_feature, acc_z_feature = fea.accfreature(result['acc_x'], result['acc_y'], result['acc_z'])
-                if i < 100:
-                    i = i + 1
-                    tmp.extend(result['acc_x'])
-                    tmp_feature = np.concatenate((tmp_feature, acc_x_feature), axis=1)
-                else:
-                    i = 0
-                    dv.datasave('acc_x', tmp)
-                    fea.featuresave('acc_x', tmp_feature)
-                    tmp_feature = acc_x_feature
-                    tmp = []
                 laser_feature = result['laser']
                 data = {'acc_x': acc_x_feature,
                         'acc_y': acc_y_feature,
@@ -259,6 +255,7 @@ class AccFeatureProcess(mp.Process):
                         'eye'  : result['eye'],
                         'color': result['color'],
                         'bme': result['bme'],
+                        'mag': result['mag']
                         }
                 self.queue_out.put(data)
 
@@ -287,12 +284,8 @@ class RecoModelProcess(mp.Process):
 
     def run(self):
         print("# model process id : ", os.getpid())
-        spin_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/on.tflite")
+        spin_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/inference/spin.tflite")
         spin_interpreter.allocate_tensors()
-        up_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/on.tflite")
-        up_interpreter.allocate_tensors()
-        down_interpreter = tflite.Interpreter(model_path=f"{ROOT_DIR}/models/seat/on.tflite")
-        down_interpreter.allocate_tensors()
         #print(spin_interpreter.get_output_details())
 
         input_details = spin_interpreter.get_input_details()
@@ -315,6 +308,7 @@ class RecoModelProcess(mp.Process):
                 eye_data = result['eye']
                 color_data = result['color']
                 bme_data = result['bme']
+                mag_data = result['mag']
                 merge_feature = np.column_stack((self.mic_feature,
                                                  self.acc_x_feature,
                                                  self.acc_y_feature,
@@ -323,36 +317,19 @@ class RecoModelProcess(mp.Process):
 
                 spin_interpreter.set_tensor(input_index, merge_feature)
                 spin_interpreter.invoke()
-                spin_output = spin_interpreter.get_tensor(58)
-
-                up_interpreter.set_tensor(input_index, merge_feature)
-                up_interpreter.invoke()
-                up_output = up_interpreter.get_tensor(68)
-
-                down_interpreter.set_tensor(input_index, merge_feature)
-                down_interpreter.invoke()
-                down_output = down_interpreter.get_tensor(93)
-                downa_output = down_interpreter.get_tensor(96)
-                print(downa_output, spin_output, up_output, down_output)
+                spin_output = spin_interpreter.get_tensor(96)
                 if spin_output > 0.2:
                     pred_resutl.append('spin')
-                    print(f"spin       : Y")
-                else:
-                    print(f"spin       : N")
+                    # print(f"spin       : Y")
                 if result['laser'][0] == 2:
                     pred_resutl.append('upward')
-                    print(f"upward     : Y")
-                else:
-                    print(f"upward     : N")
-
+                    #print(f"upward     : Y")
                 if result['laser'][0] == 0:
                     pred_resutl.append('downward')
-                    print(f"downward   : Y")
-                else:
-                    print(f"downward   : N")
+                    # print(f"downward   : Y")
 
                 # 0.18s
-                dv.featurev(self.mic_feature, self.acc_x_feature, self.acc_y_feature, self.acc_z_feature,self.laser_feature[0], pred_resutl, laser_data, eye_data, color_data, bme_data)
+                dv.featurev(self.mic_feature, self.acc_x_feature, self.acc_y_feature, self.acc_z_feature,self.laser_feature[0], pred_resutl, laser_data, eye_data, color_data, bme_data, mag_data)
 
 if __name__ == "__main__":
     try:
@@ -372,6 +349,4 @@ if __name__ == "__main__":
     finally:
         time.sleep(3)
         print("\n# please type ctrl+c to stop program")
-
-
 

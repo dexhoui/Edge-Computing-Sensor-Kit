@@ -98,7 +98,8 @@ class MPU9250:
     def __init__(self, address=SLAVE_ADDRESS):
         self.address = address
         self.configMPU9250(GFS_250, AFS_2G)
-        #self.configAK8963(AK8963_MODE_C100HZ, AK8963_BIT_16)
+        time.sleep(1)
+        self.configAK8963(AK8963_MODE_C100HZ, AK8963_BIT_16)
         if (self.searchDevice()):
             print("# mpu is initializing")
         else:
@@ -351,4 +352,6 @@ class MPU9250:
 
 if __name__ == "__main__":
     mpu = MPU9250()
-    print(mpu.readAccel(), mpu.readGyro())
+    while True:
+        print(mpu.readAccel(), mpu.readGyro(), mpu.readMagnet())
+        time.sleep(0.5)

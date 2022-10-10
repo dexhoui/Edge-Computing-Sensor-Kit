@@ -1,23 +1,3 @@
-#!/usr/bin/python
-#--------------------------------------
-#    ___  ___  _ ____
-#   / _ \/ _ \(_) __/__  __ __
-#  / , _/ ___/ /\ \/ _ \/ // /
-# /_/|_/_/  /_/___/ .__/\_, /
-#                /_/   /___/
-#
-#           bme280.py
-#  Read data from a digital pressure sensor.
-#
-#  Official datasheet available from :
-#  https://www.bosch-sensortec.com/bst/products/all_products/bme280
-#
-# Author : Matt Hawkins
-# Date   : 21/01/2018
-#
-# https://www.raspberrypi-spy.co.uk/
-#
-#--------------------------------------
 import smbus
 import time
 from ctypes import c_short
@@ -156,17 +136,14 @@ def readBME280All(addr=DEVICE):
 
   return temperature/100.0,pressure/100.0,humidity
 
-def main():
 
+if __name__=="__main__":
   (chip_id, chip_version) = readBME280ID()
   print("Chip ID     :", chip_id)
   print("Version     :", chip_version)
-
-  temperature, pressure,humidity = readBME280All()
-
-  print("Temperature : ", temperature, "C")
-  print("Pressure : ", pressure, "hPa")
-  print("Humidity : ", humidity, "%")
-
-if __name__=="__main__":
-   main()
+  while True:
+    temperature, pressure, humidity = readBME280All()
+    print("Temperature : ", temperature, "C")
+    print("Pressure : ", pressure, "hPa")
+    print("Humidity : ", humidity, "%")
+    time.sleep(0.5)
