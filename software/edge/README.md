@@ -359,7 +359,7 @@ Here, we strongly recommend [Pycharm](https://www.jetbrains.com/pycharm/download
 
 
 
-## ERROR
+## WARNING
 > ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.rear
 ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.center_lfe
 ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.side
@@ -386,4 +386,4 @@ ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.modem
 ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.phoneline
 ALSA lib pcm.c:2660:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.phoneline
 
-> sudo vim /usr/share/alsa/alsa.conf
+`sudo cp ~/edge/tools/alsa.conf /usr/share/alsa/`

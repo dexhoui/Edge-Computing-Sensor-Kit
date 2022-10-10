@@ -73,9 +73,9 @@ def create_feature_tfrecord(list_path, train_save_path, test_save_path):
     laser_datas = []
     laser_labels = []
 
-    mic_list_path = os.path.join(list_path + 'mic_list.txt')
-    acc_list_path = os.path.join(list_path + 'acc_list.txt')
-    laser_list_path = os.path.join(list_path + 'laser_list.txt')
+    mic_list_path = os.path.join(list_path, 'mic_list.txt')
+    acc_list_path = os.path.join(list_path, 'acc_list.txt')
+    laser_list_path = os.path.join(list_path, 'laser_list.txt')
     with open(mic_list_path, 'r+') as mic_all_paths, \
             open(acc_list_path, 'r+') as acc_all_paths, \
             open(laser_list_path, 'r+') as laser_all_paths:
@@ -149,7 +149,7 @@ def create_feature_tfrecord(list_path, train_save_path, test_save_path):
             merge_feature = merge_feature.reshape(-1).tolist()
             tf_example = data_example(merge_feature, int(mic_labels[i]))
             # split
-            if i % 9 == 0:
+            if i % 8 == 0:
                 test.write(tf_example.SerializeToString())
             else:
                 train.write(tf_example.SerializeToString())

@@ -1,7 +1,7 @@
 ####  SAMPLING INFORMATION ####
 # scene information
 dataset = '350'    # scene
-activity = "on"   # activity
+activity = "spinupdown"   # activity
 duration = 50      # duration
 
 

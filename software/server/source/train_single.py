@@ -254,8 +254,8 @@ if __name__ == "__main__":
         print(f"laser accuracy: {numpy.sum(laser_accuracy) / len(laser_accuracy)}, "
               f"loss:{numpy.sum(laser_losses) / len(laser_losses)}")
 
-        tf.saved_model.save(mic_model, f"models/tensorflow/{arg.scene}/{arg.activity}/mic")
-        tf.saved_model.save(acc_x_model, f"models/tensorflow/{arg.scene}/{arg.activity}/acc_x")
-        tf.saved_model.save(acc_y_model, f"models/tensorflow/{arg.scene}/{arg.activity}/acc_y")
-        tf.saved_model.save(acc_z_model, f"models/tensorflow/{arg.scene}/{arg.activity}/acc_z")
-        tf.saved_model.save(laser_model, f"models/tensorflow/{arg.scene}/{arg.activity}/laser")
+        tf.saved_model.save(mic_model, f"{arg.tensorflow_model_path}/mic")
+        tf.saved_model.save(acc_x_model, f"{arg.tensorflow_model_path}/acc_x")
+        tf.saved_model.save(acc_y_model, f"{arg.tensorflow_model_path}/acc_y")
+        tf.saved_model.save(acc_z_model, f"{arg.tensorflow_model_path}/acc_z")
+        tf.saved_model.save(laser_model, f"{arg.tensorflow_model_path}/laser")

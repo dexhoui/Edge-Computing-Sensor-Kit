@@ -17,7 +17,7 @@ def datasave(name, data):
     plt.close()
 
 
-def featurev(mic_feature, acc_x_feature, acc_y_feature, acc_z_feature, laser_feature, results, laser_data, eye_data, color_data, bme_data):
+def featurev(mic_feature, acc_x_feature, acc_y_feature, acc_z_feature, laser_feature, results, laser_data, eye_data, color_data, bme_data, mag_data):
     # 60 * 66 => 60 * 60
     mic_data = mic_feature[:, 6:]
     # 60 * 60 => 6 * 60
@@ -50,10 +50,10 @@ def featurev(mic_feature, acc_x_feature, acc_y_feature, acc_z_feature, laser_fea
     y = y.reshape(-1).tolist()
     z = z.reshape(-1).tolist()
 
-    data = {'m': m, 'x': x, 'y': y, 'z': z, 'l': l, 'ld': laser_data, 'e': e, 'color': color_data, 'bme': bme_data, 'activity': results}
+    data = {'m': m, 'x': x, 'y': y, 'z': z, 'l': l, 'ld': laser_data, 'e': e, 'color': color_data, 'bme': bme_data, 'mag':mag_data, 'activity': results}
     try:
         feedback = requests.get(arg.url, json=data, timeout=20)
-        print(feedback.text, results)
+        # print(feedback.text, results)
     except requests.exceptions.ConnectionError:
         print('ConnectionError')
         time.sleep(3)

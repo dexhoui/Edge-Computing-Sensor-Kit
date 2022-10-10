@@ -42,9 +42,9 @@ print("OK")
 '''
 for m in ['final']:
   # Convert the model
-  converter = tf.lite.TFLiteConverter.from_saved_model(f"models/tensorflow/{arg.scene}/{arg.activity}/{m}")  # path to the SavedModel directory
+  converter = tf.lite.TFLiteConverter.from_saved_model(f"{arg.tensorflow_model_path}/{m}")  # path to the SavedModel directory
   tflite_model = converter.convert()
   # Save the model.
-  with open(f'models/tflite/{arg.scene}/{arg.activity}/{arg.activity}.tflite', 'wb') as f:
+  with open(f'{arg.tflite_model_path}.tflite', 'wb') as f:
     f.write(tflite_model)
   print(f"{arg.activity} tflite model converted !")

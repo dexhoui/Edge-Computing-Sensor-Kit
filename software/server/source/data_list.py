@@ -15,10 +15,8 @@ import arguments as arg
 @ return   : None
 """
 def get_mic_data_list(data_path, list_path):
-    if not os.path.exists(list_path):
-        os.makedirs(list_path)
-    mic_data_path = os.path.join(data_path + 'mic')
-    mic_list_path = os.path.join(list_path + 'mic_list.txt')
+    mic_data_path = os.path.join(data_path, 'mic')
+    mic_list_path = os.path.join(list_path, 'mic_list.txt')
     mic_class_dir = os.listdir(mic_data_path)
     with open(mic_list_path, 'w') as f_mic:
         for i in range(len(mic_class_dir)):
@@ -36,8 +34,6 @@ def get_mic_data_list(data_path, list_path):
 @ return   : BOHAO CHU
 """
 def get_acc_data_list(data_path, list_path):
-    if not os.path.exists(list_path):
-        os.makedirs(list_path)
     acc_data_path = os.path.join(data_path, 'acc')
     acc_list_path = os.path.join(list_path, 'acc_list.txt')
     acc_class_dir = os.listdir(acc_data_path)
@@ -58,8 +54,6 @@ def get_acc_data_list(data_path, list_path):
 @ return   : BOHAO CHU
 """
 def get_gyr_data_list(data_path, list_path):
-    if not os.path.exists(list_path):
-        os.makedirs(list_path)
     gyr_data_path = os.path.join(data_path, 'gyr')
     gyr_list_path = os.path.join(list_path, 'gyr_list.txt')
     gyr_class_dir = os.listdir(gyr_data_path)
@@ -79,8 +73,6 @@ def get_gyr_data_list(data_path, list_path):
 @ return   : BOHAO CHU
 """
 def get_laser_data_list(data_path, list_path):
-    if not os.path.exists(list_path):
-        os.makedirs(list_path)
     laser_data_path = os.path.join(data_path, 'laser')
     laser_list_path = os.path.join(list_path, 'laser_list.txt')
     laser_class_dir = os.listdir(laser_data_path)

@@ -21,11 +21,11 @@ class FinalMLP(keras.Model):
     def __init__(self):
         super(FinalMLP, self).__init__()
         self.hidden = keras.layers.Dense(units=1, activation=tf.nn.sigmoid)
-        self.mic_model = tf.saved_model.load(f"models/tensorflow/{arg.scene}/{arg.activity}/mic")
-        self.acc_x_model = tf.saved_model.load(f"models/tensorflow/{arg.scene}/{arg.activity}/acc_x")
-        self.acc_y_model = tf.saved_model.load(f"models/tensorflow/{arg.scene}/{arg.activity}/acc_y")
-        self.acc_z_model = tf.saved_model.load(f"models/tensorflow/{arg.scene}/{arg.activity}/acc_z")
-        self.laser_model = tf.saved_model.load(f"models/tensorflow/{arg.scene}/{arg.activity}/laser")
+        self.mic_model = tf.saved_model.load(f"{arg.tensorflow_model_path}/mic")
+        self.acc_x_model = tf.saved_model.load(f"{arg.tensorflow_model_path}/acc_x")
+        self.acc_y_model = tf.saved_model.load(f"{arg.tensorflow_model_path}/acc_y")
+        self.acc_z_model = tf.saved_model.load(f"{arg.tensorflow_model_path}/acc_z")
+        self.laser_model = tf.saved_model.load(f"{arg.tensorflow_model_path}/laser")
 
     def call(self, input_tensor):
         # split merger feature for single models
@@ -170,4 +170,4 @@ if __name__ == "__main__":
         print(f"final accuracy: {numpy.sum(final_accuracy) / len(final_accuracy)}, "
               f"loss:{numpy.sum(final_losses) / len(final_losses)}")
 
-        tf.saved_model.save(final_model, f"models/tensorflow/{arg.scene}/{arg.activity}/final")
+        tf.saved_model.save(final_model, f"{arg.tensorflow_model_path}/final")
